@@ -1,4 +1,9 @@
-﻿#target photoshop
+﻿//******************************************
+// PHOTOSHOP REPLACE CONTENT AND SAVE PDF
+// Author: Vladislav Dovgopaty <me@vladislavd.ru>
+// Url: https://bitbucket.org/vladislavdovg/iskra-model-pdf-creator
+
+#target photoshop
 
 var frame = {
     top: 76,
