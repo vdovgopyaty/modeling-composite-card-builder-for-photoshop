@@ -1,7 +1,7 @@
 ﻿//******************************************
-// PHOTOSHOP REPLACE CONTENT AND SAVE PDF
+// PHOTOSHOP PDF CREATOR
 // Author: Vladislav Dovgopaty <me@vladislavd.ru>
-// Url: https://bitbucket.org/vladislavdovg/iskra-model-pdf-creator
+// Url: https://bitbucket.org/vladislavdovg/photoshop-pdf-creator
 
 #target photoshop
 
@@ -23,7 +23,7 @@ var imageWidth = docWidth - frame.left - frame.right;
 var imageHeight = docHeight - frame.top - frame.bottom;
 var imageRatio = imageWidth / imageHeight;
 
-var outputFilePath = prompt('Укажите папку для сохранения PDF-файлов (папка должна существовать)', '/d/Iskra/pdf');
+var outputFilePath = prompt('Укажите путь к папке для сохранения PDF-файлов (папка должна существовать)', '/d/pdfcreator/pdf');
 var options = new PDFSaveOptions;
 options.presentation = true;
 options.view = true;
@@ -79,5 +79,5 @@ if (images.length > 0) {
         newGroups[i].visible = false;
     }
 } else {
-    alert('Ошибка: изображения в папке D:/Iskra/images не найдены');
+    alert('Ошибка: изображения в папке ' + imagesFolderPath + ' не найдены');
 }

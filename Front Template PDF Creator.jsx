@@ -1,7 +1,7 @@
 ﻿//******************************************
-// PHOTOSHOP REPLACE CONTENT AND SAVE PDF
+// PHOTOSHOP PDF CREATOR
 // Author: Vladislav Dovgopaty <me@vladislavd.ru>
-// Url: https://bitbucket.org/vladislavdovg/iskra-model-pdf-creator
+// Url: https://bitbucket.org/vladislavdovg/photoshop-pdf-creator
 
 #target photoshop
 
@@ -23,7 +23,7 @@ var imageWidth = docWidth - frame.left - frame.right;
 var imageHeight = docHeight - frame.top - frame.bottom;
 var imageRatio = imageWidth / imageHeight;
 
-var outputFilePath = prompt('Укажите папку для сохранения PDF-файлов (папка должна существовать)', '/d/Iskra/pdf');
+var outputFilePath = prompt('Укажите путь к папке для сохранения PDF-файлов (папка должна существовать)', '/d/pdfcreator/pdf');
 var options = new PDFSaveOptions;
 options.presentation = true;
 options.view = true;
@@ -33,7 +33,7 @@ options.loop = true;
 options.transition = TransitionType.RANDOM;
 
 // чтение текстового файла
-var textFilePath = prompt('Укажите путь к текстовому файлу', '/d/Iskra/input.txt');
+var textFilePath = prompt('Укажите путь к текстовому файлу', '/d/pdfcreator/input.txt');
 var textFile = File(textFilePath);
 if (textFile.exists) {
     textFile.open('r');
@@ -47,7 +47,7 @@ if (textFile.exists) {
     textFile.close();
 
     // чтение изображений
-    var imagesFolderPath = prompt('Укажите путь к папке с изображениями', '/d/Iskra/images/front');
+    var imagesFolderPath = prompt('Укажите путь к папке с изображениями', '/d/pdfcreator/images/front');
     var images = Folder(imagesFolderPath).getFiles();
     if (images.length > 0) {
 
@@ -101,8 +101,8 @@ if (textFile.exists) {
             alert('Ошибка: количество данных в текстовом файле не соответствует количеству изображений');
         }
     } else {
-        alert('Ошибка: изображения в папке D:/Iskra/images не найдены');
+        alert('Ошибка: изображения в папке ' + imagesFolderPath + ' не найдены');
     }
 } else {
-    alert('Ошибка: текстовый файл D:/Iskra/text.txt не найден');
+    alert('Ошибка: текстовый файл ' + textFilePath + ' не найден');
 }
