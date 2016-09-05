@@ -6,10 +6,10 @@
 #target photoshop
 
 var frame = {
-    top: 76,
-    left: 38,
-    right: 38,
-    bottom: 54
+    top: 80,
+    left: 42,
+    right: 42,
+    bottom: 60
 };
 
 var doc = app.activeDocument;
