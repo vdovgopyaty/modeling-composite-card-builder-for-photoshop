@@ -1,4 +1,4 @@
-# Iskra Model Photoshop PDF-composite creation #
+# Photoshop PDF Creator #
 
 Скрипт для Photoshop CS6 и выше, который позволяет создать композитки в формате PDF на основе данных из тестового файла и фотографий.
 
