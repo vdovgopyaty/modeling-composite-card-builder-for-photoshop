@@ -31,9 +31,10 @@ options.autoAdvance = true;
 options.interval = 5;
 options.loop = true;
 options.transition = TransitionType.RANDOM;
+options.layers = false;
 
 // чтение изображений
-var imagesFolderPath = prompt('Укажите путь к папке с изображениями', '/d/Iskra/images/back');
+var imagesFolderPath = prompt('Укажите путь к папке с изображениями', '/d/pdfcreator/images/back');
 var images = Folder(imagesFolderPath).getFiles();
 if (images.length > 0) {
     var group = doc.layerSets.getByName('group');
@@ -49,13 +50,13 @@ if (images.length > 0) {
         var currentImage = app.activeDocument;
         var currentImageWidth = currentImage.width;
         var currentImageHeight = currentImage.height;
-        var currentimageRatio = currentImageWidth / currentImageHeight;
+        var currentImageRatio = currentImageWidth / currentImageHeight;
 
         // изменение размера изображения в соответвии с рамкой
-        if (currentimageRatio < imageRatio) {
+        if (currentImageRatio < imageRatio) {
             currentImage.resizeImage(imageWidth);
-        } else if (currentimageRatio > imageRatio) {
-            currentImage.resizeImage(imageHeight * currentimageRatio);
+        } else if (currentImageRatio > imageRatio) {
+            currentImage.resizeImage(imageHeight * currentImageRatio);
         }
         currentImageWidth = currentImage.width;
         currentImageHeight = currentImage.height;
@@ -74,7 +75,11 @@ if (images.length > 0) {
         }
 
         // сохранение PDF-файла
-        var outputFile = File(outputFilePath + '/back' + parseInt(i + 1) + '.pdf');
+        var prefix = '0';
+        if (i < 9) {
+            prefix += '0';
+        }
+        var outputFile = File(outputFilePath + '/' + prefix + parseInt(i + 1) + '-2-back.pdf');
         doc.saveAs(outputFile, options);
         newGroups[i].visible = false;
     }

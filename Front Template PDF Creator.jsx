@@ -31,6 +31,7 @@ options.autoAdvance = true;
 options.interval = 5;
 options.loop = true;
 options.transition = TransitionType.RANDOM;
+options.layers = false;
 
 // чтение текстового файла
 var textFilePath = prompt('Укажите путь к текстовому файлу', '/d/pdfcreator/input.txt');
@@ -51,7 +52,7 @@ if (textFile.exists) {
     var images = Folder(imagesFolderPath).getFiles();
     if (images.length > 0) {
 
-        if (data.length == images.length) {
+        if (data.length <= images.length) {
             var group = doc.layerSets.getByName('group');
             var newGroups = [];
 
@@ -67,13 +68,13 @@ if (textFile.exists) {
                 var currentImage = app.activeDocument;
                 var currentImageWidth = currentImage.width;
                 var currentImageHeight = currentImage.height;
-                var currentimageRatio = currentImageWidth / currentImageHeight;
+                var currentImageRatio = currentImageWidth / currentImageHeight;
 
                 // изменение размера изображения в соответвии с рамкой
-                if (currentimageRatio < imageRatio) {
+                if (currentImageRatio < imageRatio) {
                     currentImage.resizeImage(imageWidth);
-                } else if (currentimageRatio > imageRatio) {
-                    currentImage.resizeImage(imageHeight * currentimageRatio);
+                } else if (currentImageRatio > imageRatio) {
+                    currentImage.resizeImage(imageHeight * currentImageRatio);
                 }
                 currentImageWidth = currentImage.width;
                 currentImageHeight = currentImage.height;
@@ -92,7 +93,11 @@ if (textFile.exists) {
                 }
 
                 // сохранение PDF-файла
-                var outputFile = File(outputFilePath + '/front' + parseInt(i + 1) + '.pdf');
+                var prefix = '0';
+                if (i < 9) {
+                    prefix += '0';
+                }
+                var outputFile = File(outputFilePath + '/' + prefix + parseInt(i + 1) + '-1-front.pdf');
                 doc.saveAs(outputFile, options);
                 newGroups[i].visible = false;
             }
