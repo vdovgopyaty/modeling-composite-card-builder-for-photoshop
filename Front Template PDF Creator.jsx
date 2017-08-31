@@ -1,6 +1,6 @@
 ﻿//******************************************
 // PHOTOSHOP PDF CREATOR
-// Author: Vladislav Dovgopaty <me@vladislavd.ru>
+// Author: Vladislav Dovgopyaty <vdovgopyaty@gmail.com>
 // Url: https://bitbucket.org/vladislavdovg/photoshop-pdf-creator
 
 #target photoshop
@@ -49,7 +49,7 @@ if (textFile.exists) {
 
     // чтение изображений
     var imagesFolderPath = prompt('Укажите путь к папке с изображениями', '/d/pdfcreator/images/front');
-    var images = Folder(imagesFolderPath).getFiles();
+    var images = Folder(imagesFolderPath).getFiles(/\.(jpg|jpeg|png|bmp)$/i);
     if (images.length > 0) {
 
         if (data.length <= images.length) {
