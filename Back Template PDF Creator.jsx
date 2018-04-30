@@ -1,112 +1,169 @@
 ﻿//******************************************
 // PHOTOSHOP PDF CREATOR
 // Author: Vladislav Dovgopyaty <vdovgopyaty@gmail.com>
-// Url: https://bitbucket.org/vladislavdovg/photoshop-pdf-creator
+// Url: https://bitbucket.org/vdovgopyaty/photoshop-pdf-creator
 
 #target photoshop
 
-var frame = {
-    top: 307,
-    left: 118,
-    right: 118,
-    bottom: 235
+// конфигурация
+var config = {
+	// размер рамки
+	frame: {
+		top: 307,
+		left: 118,
+		right: 118,
+		bottom: 235,
+	},
+	// пути к файлам и папкам относительно местоположения скрипта
+	paths: {
+		outputFolder: '/pdf',
+		outputFilePrefix: 'back',
+		imageFolder: '/images/back',
+		textFile: '/input.txt',
+	},
+	// процессоры
+	processors: {
+		text: true
+	}
 };
 
-var currentFolder = decodeURI(File($.fileName).parent);
+function init() {
+	config.doc = app.activeDocument;
+	var d = config.doc;
+	    d.centerV = d.height / 2;
+	    d.centerH = d.width / 2;
 
-var doc = app.activeDocument;
-var docWidth = doc.width;
-var docHeight = doc.height;
+	var p = config.paths;
+	    p.currentFolder = decodeURI(File($.fileName).parent);
 
-var imageWidth = docWidth - frame.left - frame.right;
-var imageHeight = docHeight - frame.top - frame.bottom;
-var imageRatio = imageWidth / imageHeight;
+	if (p.outputFolder) { p.outputFolder = p.currentFolder + p.outputFolder; }
+	if (p.imageFolder)  { p.imageFolder  = p.currentFolder + p.imageFolder; }
+	if (p.textFile)     { p.textFile     = p.currentFolder + p.textFile; }
 
-var outputFilePath = prompt('Укажите путь к папке для сохранения PDF-файлов (папка должна существовать)', currentFolder + '/pdf');
-var options = new PDFSaveOptions;
-options.presentation = true;
-options.view = true;
-options.autoAdvance = true;
-options.interval = 5;
-options.loop = true;
-options.transition = TransitionType.RANDOM;
-options.layers = false;
+	if (config.frame) {
+		var f = config.frame;
+		    f.height  = config.doc.height - f.top - f.bottom;
+		    f.width   = config.doc.width - f.left - f.right;
+		    f.ratio   = f.width / f.height;
+		    f.centerV = f.top + f.height / 2;
+		    f.centerH = f.left + f.width / 2;
+	}
+
+	config.pdfOptions = new PDFSaveOptions;
+	var o = config.pdfOptions;
+	    o.presentation = true;
+	    o.view         = true;
+	    o.autoAdvance  = true;
+	    o.interval     = 5;
+	    o.loop         = true;
+	    o.transition   = TransitionType.RANDOM;
+	    o.layers       = false;
+
+	p.outputFolder = prompt('Укажите путь к папке для сохранения PDF-файлов (папка должна существовать)', p.outputFolder);
+	var images = readImages(p.imageFolder);
+	if (config.processors.text) {
+		var textData = readTextFile(p.textFile);
+	}
+	createPdf(config, images, textData);
+}
+
+init();
+
+// чтение изображений
+function readImages(path) {
+	var images = Folder(
+		prompt('Укажите путь к папке с изображениями', path)
+	).getFiles(/\.(jpg|jpeg|png|bmp)$/i);
+
+	if (images.length > 0) {
+		return images;
+	}
+
+	alert('Ошибка: изображения в папке ' + path + ' не найдены');
+	return false;
+}
 
 // чтение текстового файла
-var textFilePath = prompt('Укажите путь к текстовому файлу', currentFolder + '/input.txt');
-var textFile = File(textFilePath);
-if (textFile.exists) {
-    textFile.open('r');
-    var data = [];
-    while (!textFile.eof) {
-        data.push({
-            name: textFile.readln(),
-            props: textFile.readln()
-        });
-    }
-    textFile.close();
+function readTextFile(path) {
+	var textFile = File(prompt('Укажите путь к текстовому файлу', path));
 
-    // чтение изображений
-    var imagesFolderPath = prompt('Укажите путь к папке с изображениями', currentFolder + '/images/front');
-    var images = Folder(imagesFolderPath).getFiles(/\.(jpg|jpeg|png|bmp)$/i);
-    if (images.length > 0) {
+	if (textFile.exists) {
+		textFile.open('r');
+		var data = [];
 
-        if (data.length = images.length) {
-            var group = doc.layerSets.getByName('group');
-            var newGroups = [];
+		while (!textFile.eof) {
+			data.push({
+				name: textFile.readln(),
+				props: textFile.readln()
+			});
+		}
 
-            // перебор изображений
-            for (var i = 0; i < images.length; i++) {
-                // дублирования шаблонного слоя и изменение значений текстовых полей
-                newGroups.push(group.duplicate());
-                newGroups[i].layers[0].textItem.contents = data[i].name;
-                newGroups[i].layers[1].textItem.contents = data[i].props;
+		textFile.close();
+		return data;
+	}
 
-                // загрузка изображения из папки
-                load(images[i]);
-                var currentImage = app.activeDocument;
-                var currentImageWidth = currentImage.width;
-                var currentImageHeight = currentImage.height;
-                var currentImageRatio = currentImageWidth / currentImageHeight;
-
-                // изменение размера изображения в соответвии с рамкой
-                if (currentImageRatio < imageRatio) {
-                    currentImage.resizeImage(imageWidth);
-                } else if (currentImageRatio > imageRatio) {
-                    currentImage.resizeImage(imageHeight * currentImageRatio);
-                }
-                currentImageWidth = currentImage.width;
-                currentImageHeight = currentImage.height;
-
-                // вставка изображения в исходный документ
-                currentImage.activeLayer.copy();
-                currentImage.close(SaveOptions.DONOTSAVECHANGES);
-                doc.paste().move(newGroups[i], ElementPlacement.PLACEATEND);
-
-                // перемещение изображения в соответствии с рамкой
-                if (currentImageHeight > imageHeight) {
-                    var currentImageMargin = currentImageHeight - imageHeight;
-                    doc.activeLayer.translate(frame.right - frame.left, (frame.top - frame.bottom + currentImageMargin) / 2);
-                } else {
-                    doc.activeLayer.translate(frame.right - frame.left, (frame.top - frame.bottom) / 2);
-                }
-
-                // сохранение PDF-файла
-                var prefix = '0';
-                if (i < 9) {
-                    prefix += '0';
-                }
-                var outputFile = File(outputFilePath + '/' + prefix + parseInt(i + 1) + '-back-' + Date.now() + '.pdf');
-                doc.saveAs(outputFile, options);
-                newGroups[i].visible = false;
-            }
-
-        } else {
-            alert('Ошибка: количество данных в текстовом файле не соответствует количеству изображений');
-        }
-    } else {
-        alert('Ошибка: изображения в папке ' + imagesFolderPath + ' не найдены');
-    }
-} else {
-    alert('Ошибка: текстовый файл ' + textFilePath + ' не найден');
+	alert('Ошибка: текстовый файл ' + path + ' не найден');
+	return false;
 }
+
+function createPdf(cfg, images, textData) {
+	if (cfg.processors.text) {
+		if (textData.length != images.length) {
+			alert('Ошибка: количество данных в текстовом файле не соответствует количеству изображений');
+			return false;
+		}
+	}
+
+	var group = cfg.doc.layerSets.getByName('group');
+	var newGroups = [];
+
+	// перебор изображений
+	for (var i = 0; i < images.length; i++) {
+		// дублирования шаблонного слоя и изменение значений текстовых полей
+		newGroups.push(group.duplicate());
+		if (cfg.processors.text) {
+			newGroups[i].layers[0].textItem.contents = textData[i].name;
+			newGroups[i].layers[1].textItem.contents = textData[i].props;
+		}
+
+		// загрузка изображения из папки
+		load(images[i]);
+		var image = app.activeDocument;
+		var imageRatio = image.width / image.height;
+
+		// изменение размера изображения в соответствии с рамкой
+		if (imageRatio < cfg.frame.ratio) {
+			image.resizeImage(cfg.frame.width);
+		} else if (imageRatio > cfg.frame.ratio) {
+			image.resizeImage(cfg.frame.height * imageRatio);
+		}
+
+		var imageHeight = image.height;
+		var imageWidth = image.width;
+
+		// вставка изображения в исходный документ
+		image.activeLayer.copy();
+		image.close(SaveOptions.DONOTSAVECHANGES);
+		cfg.doc.paste().move(newGroups[i], ElementPlacement.PLACEATEND);
+
+		// перемещение изображения по центру рамки
+		if (imageHeight > cfg.doc.height) {
+			var imageCenterV = imageHeight / 2;
+		} else {
+			var imageCenterV = cfg.doc.height / 2;
+		}
+		cfg.doc.activeLayer.translate(
+			cfg.frame.right - cfg.frame.left,
+			cfg.frame.centerV - imageCenterV
+		);
+
+		// сохранение PDF-файла
+		var numPrefix = '0';
+		if (i < 9) {
+			numPrefix += '0';
+		}
+		var outputFile = File(cfg.paths.outputFolder + '/' + numPrefix + parseInt(i + 1) + '-' + cfg.paths.outputFilePrefix + '-' + Date.now() + '.pdf');
+		cfg.doc.saveAs(outputFile, cfg.pdfOptions);
+		newGroups[i].visible = false;
+	}
+};
