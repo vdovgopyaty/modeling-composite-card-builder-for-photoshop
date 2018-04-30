@@ -8,9 +8,8 @@
 
 **Внимание! Для работы скрипта в Фотошопе в настройках единиц измерения требуется выбрать пиксели.**
 
-1. Создать папку `/pdf` в папке, где лежит скрипт.
-2. Открыть Front Template.psd или Back Template.psd в Photoshop.
-3. Нажать `Файл` -> `Сценарии` -> `Обзор` и выбрать файл `Front Template PDF Creator.jsx` или `Back Template PDF Creator.jsx` соответственно.
+1. Открыть Front Template.psd или Back Template.psd в Photoshop.
+2. Нажать `Файл` -> `Сценарии` -> `Обзор` и выбрать файл `Front Template PDF Creator.jsx` или `Back Template PDF Creator.jsx` соответственно.
 
 Файлы и папки:
 
