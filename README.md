@@ -4,16 +4,17 @@
 
 Объединить несколько PDF-файлов в один можно с помощью сервиса [PDF Joiner](http://pdfjoiner.com/ru/).
 
+
 ## Как этим пользоваться?
 
 **Внимание! Для работы скрипта в Фотошопе в настройках единиц измерения требуется выбрать пиксели.**
 
-1. Открыть Front Template.psd или Back Template.psd в Photoshop.
-2. Нажать `Файл` -> `Сценарии` -> `Обзор` и выбрать файл `Front Template PDF Creator.jsx` или `Back Template PDF Creator.jsx` соответственно.
+1. Открыть `/src/front-template.psd` или `/src/back-template.psd` в Photoshop.
+2. Нажать `Файл` -> `Сценарии` -> `Обзор` и выбрать файл `/src/front-template.jsx` или `/src/back-template.jsx` соответственно.
 
 Файлы и папки:
 
-`/input.txt` - файл с данными для заполнения в формате:
+`/data/proportions.txt` - файл с данными для заполнения в формате:
 ```
 Имя_и_фамилия_1
 Параметры_1
@@ -21,9 +22,11 @@
 Параметры_2
 ```
 
-`/images/front` - папка с фотографиями для лицевой стороны
-`/images/back` - папка с фотографиями для задней стороны
+`/data/images/front` - папка с фотографиями для лицевой стороны
 
-`/pdf` - папка, в которую будут сохранены PDF-файлы
+`/data/images/back` - папка с фотографиями для оборотной стороны
+
+`/out` - папка, в которую будут сохранены готовые композитки
+
 
 [Photoshop CS6 documentation](http://wwwimages.adobe.com/content/dam/Adobe/en/products/photoshop/pdfs/cs6/Photoshop-CS6-JavaScript-Ref.pdf)

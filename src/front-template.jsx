@@ -1,7 +1,7 @@
 ﻿//******************************************
-// PHOTOSHOP PDF CREATOR
+// MODELING COMPOSITE CARD BUILDER FOR PHOTOSHOP
 // Author: Vladislav Dovgopyaty <vdovgopyaty@gmail.com>
-// Url: https://bitbucket.org/vdovgopyaty/photoshop-pdf-creator
+// Url: https://github.com/vdovgopyaty/modeling-composite-card-builder-for-photoshop
 
 #target photoshop
 
@@ -14,11 +14,11 @@ var config = {
 		right: 0,
 		bottom: 0,
 	},
-	// пути к файлам и папкам относительно местоположения скрипта
+	// пути к файлам и папкам относительно корневой папки проекта
 	paths: {
-		outputFolder: '/pdf',
+		outputFolder: '/out',
 		outputFilePrefix: 'front',
-		imageFolder: '/images/front',
+		imageFolder: '/data/images/front',
 	},
 	// процессоры
 	processors: {
@@ -29,36 +29,36 @@ var config = {
 function init() {
 	config.doc = app.activeDocument;
 	var d = config.doc;
-	    d.centerV = d.height / 2;
-	    d.centerH = d.width / 2;
+		d.centerV = d.height / 2;
+		d.centerH = d.width / 2;
 
 	var p = config.paths;
-	    p.currentFolder = decodeURI(File($.fileName).parent);
+		p.rootFolder = decodeURI(File($.fileName).parent.parent);
 
-	if (p.outputFolder) { p.outputFolder = p.currentFolder + p.outputFolder; }
-	if (p.imageFolder)  { p.imageFolder  = p.currentFolder + p.imageFolder; }
-	if (p.textFile)     { p.textFile     = p.currentFolder + p.textFile; }
+	if (p.outputFolder) { p.outputFolder = p.rootFolder + p.outputFolder; }
+	if (p.imageFolder)  { p.imageFolder  = p.rootFolder + p.imageFolder; }
+	if (p.textFile)     { p.textFile     = p.rootFolder + p.textFile; }
 
 	if (config.frame) {
 		var f = config.frame;
-		    f.height  = config.doc.height - f.top - f.bottom;
-		    f.width   = config.doc.width - f.left - f.right;
-		    f.ratio   = f.width / f.height;
-		    f.centerV = f.top + f.height / 2;
-		    f.centerH = f.left + f.width / 2;
+			f.height  = config.doc.height - f.top - f.bottom;
+			f.width   = config.doc.width - f.left - f.right;
+			f.ratio   = f.width / f.height;
+			f.centerV = f.top + f.height / 2;
+			f.centerH = f.left + f.width / 2;
 	}
 
 	config.pdfOptions = new PDFSaveOptions;
 	var o = config.pdfOptions;
-	    o.presentation = true;
-	    o.view         = true;
-	    o.autoAdvance  = true;
-	    o.interval     = 5;
-	    o.loop         = true;
-	    o.transition   = TransitionType.RANDOM;
-	    o.layers       = false;
+		o.presentation = true;
+		o.view         = true;
+		o.autoAdvance  = true;
+		o.interval     = 5;
+		o.loop         = true;
+		o.transition   = TransitionType.RANDOM;
+		o.layers       = false;
 
-	p.outputFolder = prompt('Укажите путь к папке для сохранения PDF-файлов (папка должна существовать)', p.outputFolder);
+	p.outputFolder = prompt('Укажите путь к папке для сохранения PDF-файлов', p.outputFolder);
 	var images = readImages(p.imageFolder);
 	if (config.processors.text) {
 		var textData = readTextFile(p.textFile);
