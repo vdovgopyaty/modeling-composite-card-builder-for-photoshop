@@ -75,6 +75,8 @@ function readImages(path) {
 		prompt('Укажите путь к папке с изображениями', path)
 	).getFiles(/\.(jpg|jpeg|png|bmp)$/i);
 
+	images.sort();
+
 	if (images.length > 0) {
 		return images;
 	}
